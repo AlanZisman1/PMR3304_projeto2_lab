@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if category %}
+        <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px;">
+            <h1>Categoria: {{ category.name }}</h1>
+            <p>{{ category.description }}</p>
+            <br>
+            <a href="{% url 'category_list' %}">← Voltar para lista de categorias</a>
+            |
+            <a href="{% url 'post_list' %}">Ir para Home</a>
+        </div>
+    {% else %}
+        <h1>Blog Posts</h1>
+        <p><a href="{% url 'category_list' %}">Ver todas as Categorias</a></p>
+    {% endif %}
+    
+    <hr>
+    
+    {% for post in posts %}
+        <article>
+            <h2>
+                <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
+            </h2>
+            <p>
+                <small>Publicado em: {{ post.created_at|date:"d/m/Y" }}</small>
+            </p>
+            <p>
+                {{ post.content|striptags|truncatechars:100 }}
+            </p>
+            <a href="{% url 'post_detail' post.pk %}">Ler completo</a>
+        </article>
+        <hr>
+    {% empty %}
+        <p>Nenhum post encontrado.</p>
+    {% endfor %}
+
+{% endblock %}
