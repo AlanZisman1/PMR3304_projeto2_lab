@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Criar/Editar Post</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label>Título:</label>
+    <input type="text" name="title" value="{{ post.title|default:'' }}"><br>
+    <label>Conteúdo (HTML):</label>
+    <textarea name="content">{{ post.content|default:'' }}</textarea><br>
+    <button type="submit">Salvar</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <article>
+        <h1>{{ post.title }}</h1>
+        
+        <p><small>Publicado em: {{ post.created_at|date:"d/m/Y H:i" }}</small></p>
+
+        <p><small>Atualizado em: {{ post.updated_at|date:"d/m/Y H:i" }}</small></p>
+        
+        <hr>
+        
+        <div class="content">
+            {{ post.content|safe }}
+        </div>
+    </article>
+    
+    <hr>
+    <a href="{% url 'post_update' post.pk %}">Editar</a> | 
+    <a href="{% url 'post_delete' post.pk %}">Deletar</a> |
+    <a href="{% url 'post_list' %}">Voltar</a>
+{% endblock %}
