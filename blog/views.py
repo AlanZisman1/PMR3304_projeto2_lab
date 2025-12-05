@@ -1,50 +1,35 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from .models import Post
-from .forms import PostForm
 
-# Listagem
-def post_list(request):
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'blog/post_list.html', {'posts': posts})
+# LISTAGEM
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'  # Importante: O template espera a variável 'posts'
+    ordering = ['-created_at']
 
-# Detalhes
-def post_detail(request, pk):
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        raise Http404("Post não encontrado")
-    return render(request, 'blog/post_detail.html', {'post': post})
+# DETALHES
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'blog/post_detail.html'
+    # O DetailView busca automaticamente pelo PK na URL e gera o 404 se não achar
 
-# CRIAÇÃO (Com Form)
-def post_create(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid(): # O Django verifica se os campos estão ok
-            form.save()
-            return redirect('post_list')
-    else:
-        form = PostForm() # Cria um formulário vazio
-    return render(request, 'blog/post_form.html', {'form': form})
+# CRIAÇÃO
+class PostCreateView(CreateView):
+    model = Post
+    template_name = 'blog/post_form.html'
+    fields = ['title', 'content'] # Define os campos do formulário aqui
+    # Ao salvar com sucesso, ele busca o get_absolute_url do Model para redirecionar
 
-# EDIÇÃO (Com Form)
-def post_update(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == 'POST':
-        # Passamos 'instance=post' para o Django saber QUAL post atualizar
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            form.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        # Preenche o formulário com os dados existentes do post
-        form = PostForm(instance=post)
-    return render(request, 'blog/post_form.html', {'form': form})
+# EDIÇÃO
+class PostUpdateView(UpdateView):
+    model = Post
+    template_name = 'blog/post_form.html' # Reutiliza o mesmo form de criação
+    fields = ['title', 'content']
 
-# Remoção
-def post_delete(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == 'POST':
-        post.delete()
-        return redirect('post_list')
-    return render(request, 'blog/post_confirm_delete.html', {'post': post})
+# REMOÇÃO
+class PostDeleteView(DeleteView):
+    model = Post
+    template_name = 'blog/post_confirm_delete.html'
+    success_url = reverse_lazy('post_list') # Redireciona para a home após deletar
