@@ -8,6 +8,15 @@
 
         <p><small>Atualizado em: {{ post.updated_at|date:"d/m/Y H:i" }}</small></p>
         
+        <p>
+            <strong>Categorias:</strong>
+            {% for cat in post.categories.all %}
+                <a href="{% url 'category_detail' cat.pk %}">{{ cat.name }}</a>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                Sem categoria
+            {% endfor %}
+        </p>
+
         <hr>
         
         <div class="content">

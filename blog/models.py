@@ -1,13 +1,26 @@
+from unicodedata import category
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    class Meta:
+        verbose_name_plural = "Categories" # Só pra ficar bonito no admin
+
+    def __str__(self):
+        return self.name
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    categories = models.ManyToManyField(Category, related_name='posts')
+    
     def __str__(self):
         return self.title
 
@@ -25,3 +38,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comentário de {self.author} em {self.post}'
+    
