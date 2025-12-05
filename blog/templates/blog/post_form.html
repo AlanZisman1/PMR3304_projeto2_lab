@@ -1,12 +1,17 @@
-{% extends 'base.html' %}
-{% block content %}
-  <h2>Criar/Editar Post</h2>
-  <form method="post">
-    {% csrf_token %}
-    <label>Título:</label>
-    <input type="text" name="title" value="{{ post.title|default:'' }}"><br>
-    <label>Conteúdo (HTML):</label>
-    <textarea name="content">{{ post.content|default:'' }}</textarea><br>
-    <button type="submit">Salvar</button>
-  </form>
+{% extends 'base.html' %} {% block content %}
+    <h2>{% if form.instance.pk %}Editar{% else %}Novo{% endif %} Post</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+
+        <button type="submit">Salvar</button>
+        
+        {% if form.instance.pk %}
+            <a href="{% url 'post_detail' form.instance.pk %}">Cancelar</a>
+        {% else %}
+            <a href="{% url 'post_list' %}">Cancelar</a>
+        {% endif %}
+    </form>
 {% endblock %}
